@@ -57,8 +57,12 @@ class AuthService:
                     base_path = os.getcwd()
                     credentials_path = os.path.join(base_path, credentials_path)
                 
-                self.logger.info(f"Using external credentials for Auth: {credentials_path}")
-                credential = firebase_admin.credentials.Certificate(credentials_path)
+                if os.path.exists(credentials_path):
+                    self.logger.info(f"Using external credentials for Auth: {credentials_path}")
+                    credential = firebase_admin.credentials.Certificate(credentials_path)
+                else:
+                    self.logger.warning(f"Credentials file not found at {credentials_path}. Falling back to default credentials.")
+                    credential = None
             
             app = firebase_admin.initialize_app(
                 credential=credential,
