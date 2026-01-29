@@ -41,14 +41,23 @@ class DatabaseService(BaseService):
                 base_path = os.getcwd()
                 credentials_path = os.path.join(base_path, credentials_path)
             
-            self._log("info", f"Using external credentials from: {credentials_path}")
-            from google.oauth2 import service_account
-            creds = service_account.Credentials.from_service_account_file(credentials_path)
-            
-            if database_id == "(default)":
-                self.db = firestore.Client(credentials=creds, project=self.project_id)
+            if os.path.exists(credentials_path):
+                self._log("info", f"Using external credentials from: {credentials_path}")
+                from google.oauth2 import service_account
+                creds = service_account.Credentials.from_service_account_file(credentials_path)
+                
+                if database_id == "(default)":
+                    self.db = firestore.Client(credentials=creds, project=self.project_id)
+                else:
+                    self.db = firestore.Client(credentials=creds, project=self.project_id, database=database_id)
             else:
-                self.db = firestore.Client(credentials=creds, project=self.project_id, database=database_id)
+                self._log("warning", f"Credentials file not found at {credentials_path}. Falling back to default credentials.")
+                # Initialize Firestore client with specific database using default credentials
+                # If database_id is "(default)", use default database
+                if database_id == "(default)":
+                    self.db = firestore.Client(project=self.gcp_project_id)
+                else:
+                    self.db = firestore.Client(project=self.gcp_project_id, database=database_id)
         else:
             # Initialize Firestore client with specific database using default credentials
             # If database_id is "(default)", use default database
