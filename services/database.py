@@ -51,13 +51,41 @@ class DatabaseService(BaseService):
                 else:
                     self.db = firestore.Client(credentials=creds, project=self.project_id, database=database_id)
             else:
-                self._log("warning", f"Credentials file not found at {credentials_path}. Falling back to default credentials.")
-                # Initialize Firestore client with specific database using default credentials
-                # If database_id is "(default)", use default database
-                if database_id == "(default)":
-                    self.db = firestore.Client(project=self.gcp_project_id)
+                self._log("warning", f"Credentials file not found at {credentials_path}. Checking Secret Manager.")
+                
+                creds = None
+                secret_name = config.get("credentials_secret_name")
+                
+                if secret_name:
+                    self._log("info", f"Attempting to load credentials from secret: {secret_name}")
+                    try:
+                        from configs.loader import get_secret
+                        import json
+                        
+                        secret_content = get_secret(secret_name)
+                        if secret_content:
+                            cred_dict = json.loads(secret_content)
+                            from google.oauth2 import service_account
+                            creds = service_account.Credentials.from_service_account_info(cred_dict)
+                            self._log("info", "Successfully loaded credentials from Secret Manager")
+                        else:
+                            self._log("warning", "Secret content was empty")
+                    except Exception as e:
+                        self._log("error", "Failed to load credentials from Secret Manager", error=e)
+
+                if creds:
+                    if database_id == "(default)":
+                        self.db = firestore.Client(credentials=creds, project=self.project_id)
+                    else:
+                        self.db = firestore.Client(credentials=creds, project=self.project_id, database=database_id)
                 else:
-                    self.db = firestore.Client(project=self.gcp_project_id, database=database_id)
+                    self._log("warning", "Falling back to default credentials.")
+                    # Initialize Firestore client with specific database using default credentials
+                    # If database_id is "(default)", use default database
+                    if database_id == "(default)":
+                        self.db = firestore.Client(project=self.gcp_project_id)
+                    else:
+                        self.db = firestore.Client(project=self.gcp_project_id, database=database_id)
         else:
             # Initialize Firestore client with specific database using default credentials
             # If database_id is "(default)", use default database

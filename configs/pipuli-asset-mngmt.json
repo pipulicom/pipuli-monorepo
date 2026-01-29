@@ -2,6 +2,7 @@
   "project_id": "pipuli-asset-mngmt-8cbf4",
   "auth_project_id": "pipuli-asset-mngmt-8cbf4",
   "credentials_path": "configs/credentials/pipuli-asset-mngmt-firebase.json",
+  "credentials_secret_name": "pipuli-asset-mngmt-creds",
   "database": {
     "database_id": "(default)"
   },
