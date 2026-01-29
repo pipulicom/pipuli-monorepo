@@ -1,0 +1,14 @@
+# FastAPI
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Google Cloud
+google-cloud-firestore==2.13.1
+google-cloud-logging==3.8.0
+google-cloud-secret-manager==2.18.0
+firebase-admin==6.2.0
+
+# Utils
+pydantic==2.5.0
+python-dotenv==1.0.0
+

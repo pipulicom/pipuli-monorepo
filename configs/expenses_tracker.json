@@ -1,0 +1,8 @@
+{
+    "project_id": "expenses_tracker",
+    "description": "Simple expenses tracker project",
+    "database": {
+        "database_id": "(default)"
+    },
+    "auth_project_id": "stan-baas"
+}

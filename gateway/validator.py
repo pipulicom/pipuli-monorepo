@@ -1,0 +1,44 @@
+"""
+API key validation using Google Cloud Secret Manager.
+"""
+from google.cloud import secretmanager
+import os
+
+
+def get_secret_manager_client():
+    """Get Secret Manager client."""
+    return secretmanager.SecretManagerServiceClient()
+
+
+def validate_api_key(api_key: str) -> None:
+    """
+    Validate API key against Secret Manager.
+    
+    Args:
+        api_key: API key to validate
+    
+    Raises:
+        ValueError: If API key is invalid
+    """
+    project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "stan-baas")
+    secret_id = "api-key"
+    
+    try:
+        client = get_secret_manager_client()
+        secret_name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
+        
+        # Access secret version
+        response = client.access_secret_version(request={"name": secret_name})
+        stored_api_key = response.payload.data.decode("UTF-8").strip()
+        
+        # Compare API keys
+        if api_key != stored_api_key:
+            raise ValueError("Invalid API key")
+            
+    except Exception as e:
+        # If secret doesn't exist or other error, raise validation error
+        error_msg = str(e)
+        if "not found" in error_msg.lower():
+            raise ValueError("API key secret not configured.")
+        raise ValueError(f"API key validation failed: {error_msg}")
+
