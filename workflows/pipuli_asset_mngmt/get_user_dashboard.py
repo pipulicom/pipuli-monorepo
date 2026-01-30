@@ -116,6 +116,7 @@ def execute(data: Dict[str, Any], config: Dict[str, Any], logger: Logger) -> Dic
         # Summary concept removed
         dashboard_data["summaries"] = []
 
+        workflow_logger.info(
             f"Dashboard data prepared successfully",
             {"assets_count": len(assets_with_movements)}
         )
