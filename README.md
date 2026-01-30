@@ -71,7 +71,7 @@ cat VERSION
 
 **Dashboard:**
 - `POST /api/pipuli-asset-mngmt/get_user_dashboard` - Get dashboard data
-- `POST /api/pipuli-asset-mngmt/consolidate_month` - Consolidate monthly data
+
 
 **Auth:**
 - `POST /api/pipuli-asset-mngmt/auth_login` - User authentication

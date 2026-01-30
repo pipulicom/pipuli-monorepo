@@ -126,17 +126,7 @@ def execute(data: Dict[str, Any], config: Dict[str, Any], logger: Logger) -> Dic
             {"movement_id": movement_id, "asset_id": asset_id, "uid": uid}
         )
         
-        # 8. Trigger Monthly Consolidation
-        try:
-            from workflows.pipuli_asset_mngmt import consolidate_month
-            consolidate_month.execute(
-                data={"uid": uid, "month": month.strip()},
-                config=config,
-                logger=logger
-            )
-        except Exception as e:
-            # Don't fail the request if consolidation fails, just log it
-            workflow_logger.error("Error triggering monthly consolidation", error=e)
+
         
         return success_response(
             message=SuccessMessages.MOVEMENT_CREATED,

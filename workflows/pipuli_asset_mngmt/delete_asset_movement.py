@@ -105,29 +105,7 @@ def execute(data: Dict[str, Any], config: Dict[str, Any], logger: Logger) -> Dic
             data={"deletedAt": deleted_at}
         )
         
-        # 7. Invalidate Monthly Summaries
-        try:
-            summaries_collection = f"users/{uid}/monthly_summaries"
-            summaries = db_service.list(
-                collection=summaries_collection,
-                limit=100,
-                exclude_deleted=False
-            )
-            
-            for summary in summaries:
-                db_service.delete(
-                    collection=summaries_collection,
-                    document_id=summary["month"]
-                )
-            
-            workflow_logger.info(f"Invalidated {len(summaries)} monthly summaries")
-            
-        except Exception as e:
-            workflow_logger.warning(
-                "Error invalidating monthly summaries",
-                error=e
-            )
-            # Non-critical, continue
+
         
         # 8. Return Success Response
         workflow_logger.info(
