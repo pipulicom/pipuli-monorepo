@@ -11,7 +11,7 @@ env:
 
 jobs:
   deploy:
-    name: Build & Deploy
+    name: Build & Deploy API
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -38,7 +38,6 @@ jobs:
           echo "ENV_NAME=prod" >> $GITHUB_ENV
 
       # Authenticate to Google Cloud
-      # Uses the JSON key stored in GitHub Secrets
       - name: Authenticate to Google Cloud (Dev)
         if: github.ref == 'refs/heads/dev'
         uses: google-github-actions/auth@v2
@@ -55,8 +54,8 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
-      # Deploy to Cloud Run (from source)
-      - name: Deploy to Cloud Run
+      # Deploy to Cloud Run (API)
+      - name: Deploy API to Cloud Run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: ${{ env.SERVICE_NAME }}
@@ -69,7 +68,7 @@ jobs:
 
   deploy-web:
     name: Build & Deploy Web
-    needs: deploy # Optional: wait for API to deploy first? No, parallel is fine, but maybe safer.
+    needs: deploy
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
