@@ -11,41 +11,52 @@ export interface Equipment {
 
 export const EquipmentService = {
     async list(): Promise<Equipment[]> {
-        const res = await fetch(`${API_URL}/api/${PROJ_ID}/equipments`, {
-            method: "POST", // Gateway uses POST for body args usually, but our workflow handles GET method in body or via POST?
-            // Wait, my handler uses `request.method` injected into body.
-            // If I send a GET request to Gateway, `request.method` is GET.
-            // But Gateway `process_request` allows GET.
-            // "If request.method == POST: body = await request.json()"
-            // "Merge Query Parameters into body"
-            // So if I send GET, body is query params.
-            // The workflow checks `data.get("_method")`.
-            // `router.py` injects `_method`.
-            // So if I send GET, `_method` is GET.
+        const url = `${API_URL}/api/${PROJ_ID}/equipments`;
 
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-Key": "dev-key" // Mock Key for local, or handle auth
+        try {
+            const res = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-Key": "dev-key"
+                }
+            });
+
+            if (!res.ok) {
+                console.error(`[EquipmentService] Fetch failed: ${res.status} ${res.statusText}`);
+                throw new Error("Failed to fetch");
             }
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch");
-        const json = await res.json();
-        return json.data;
+            const json = await res.json();
+            return json.data;
+        } catch (error) {
+            console.error("[EquipmentService] Network error:", error);
+            throw error;
+        }
     },
 
     async create(data: Equipment): Promise<Equipment> {
-        const res = await fetch(`${API_URL}/api/${PROJ_ID}/equipments`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-API-Key": "dev-key"
-            },
-            body: JSON.stringify(data)
-        });
+        const url = `${API_URL}/api/${PROJ_ID}/equipments`;
 
-        if (!res.ok) throw new Error("Failed to create");
-        const json = await res.json();
-        return json.data;
+        try {
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-API-Key": "dev-key"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!res.ok) {
+                console.error(`[EquipmentService] Create failed: ${res.status}`);
+                const errText = await res.text();
+                throw new Error(errText || "Failed to create");
+            }
+            const json = await res.json();
+            return json.data;
+        } catch (error) {
+            console.error("[EquipmentService] Network error:", error);
+            throw error;
+        }
     }
 };
