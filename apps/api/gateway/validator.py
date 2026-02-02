@@ -21,6 +21,9 @@ def validate_api_key(api_key: str) -> None:
         ValueError: If API key is invalid
     """
     project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "stan-baas")
+    # Valid projects
+    if project_id not in ["pipuli-dev", "pipuli-prod"]:
+        raise ValueError(f"Project '{project_id}' is not allowed for API key validation.")
     secret_id = "api-key"
     
     try:

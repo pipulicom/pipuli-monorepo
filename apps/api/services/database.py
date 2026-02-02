@@ -25,7 +25,7 @@ class DatabaseService(BaseService):
         super().__init__(config, logger)
         # Always use Google Cloud project for Firestore client
         # Priority: Config 'gcp_project_id' > Env 'GOOGLE_CLOUD_PROJECT' > Default
-        self.gcp_project_id = config.get("gcp_project_id", os.getenv("GOOGLE_CLOUD_PROJECT", "stan-baas"))
+        self.gcp_project_id = config.get("gcp_project_id", os.getenv("GOOGLE_CLOUD_PROJECT", "pipuli-dev"))
         # Project ID from config
         self.project_id = config.get("project_id", "")
         

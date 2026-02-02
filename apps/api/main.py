@@ -19,7 +19,7 @@ except FileNotFoundError:
     VERSION = "0.0.0"
 
 app = FastAPI(
-    title="Stan BaaS",
+    title="Pipuli API",
     description="Generic backend for processing API calls from multiple frontend projects",
     version=VERSION
 )
@@ -40,7 +40,7 @@ app.include_router(router, prefix="/api", tags=["api"])
 @app.get("/")
 async def root():
     """Health check endpoint."""
-    return {"message": "Pipuli Secure Deploy v1", "service": "stan-baas"}
+    return {"status": "ok", "service": "pipuli-api"}
 
 
 @app.get("/health")
@@ -54,6 +54,6 @@ async def version():
     """Get application version."""
     return {
         "version": VERSION,
-        "service": "stan-baas"
+        "service": "pipuli-api"
     }
 

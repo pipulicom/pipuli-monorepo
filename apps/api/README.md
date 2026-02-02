@@ -1,8 +1,6 @@
-# Pipuli API Service
+# Pipuli API Monorepo
 
-This is the backend service for the **Pipuli Monorepo**, built with **FastAPI** and **Google Cloud Firestore**.
-
-It serves as a centralized gateway for processing business workflows and managing data.
+Generic backend for processing API calls from multiple frontend projects.
 
 ## 📂 Structure
 

@@ -19,7 +19,7 @@ def get_secret(secret_name: str, project_id: str = None) -> str:
         Secret value as string
     """
     if not project_id:
-        project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "stan-baas")
+        project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "pipuli-dev")
     
     try:
         client = secretmanager.SecretManagerServiceClient()

@@ -68,8 +68,9 @@ class Logger:
         self.log_entries = []
         
         # Initialize Cloud Logging client
-        self.client = cloud_logging.Client(project=os.getenv("GOOGLE_CLOUD_PROJECT", "stan-baas"))
-        self.logger = self.client.logger("stan-baas")
+        self.client = cloud_logging.Client(project=os.getenv("GOOGLE_CLOUD_PROJECT", "pipuli-api"))
+        self.service_name = service_name or os.getenv("SERVICE_NAME", "pipuli-api")
+        self.logger = self.client.logger(self.service_name)
     
     def info(self, message: str, data: Optional[Dict[str, Any]] = None, module: Optional[str] = None):
         """

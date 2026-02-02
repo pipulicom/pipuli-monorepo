@@ -107,4 +107,18 @@ git branch -M main
 git push -u origin main
 git checkout -b dev
 git push -u origin dev
+git push -u origin dev
 ```
+
+---
+
+## 🔒 5. Security Hardening (Production)
+
+For production environments, **DO NOT** use the generic "Editor" role for the Service Account. Instead, grant only the necessary granular permissions:
+
+1.  **Cloud Run Admin** (`roles/run.admin`) - Manage services.
+2.  **Service Account User** (`roles/iam.serviceAccountUser`) - Act as the service identity.
+3.  **Artifact Registry Administrator** (`roles/artifactregistry.admin`) - Push Docker images.
+4.  **Cloud Build Editor** (`roles/cloudbuild.builds.editor`) - Execute builds.
+5.  **Storage Admin** (`roles/storage.admin`) - Manage build cache buckets.
+6.  **Service Usage Consumer** (`roles/serviceusage.serviceUsageConsumer`) - Use project quota.
