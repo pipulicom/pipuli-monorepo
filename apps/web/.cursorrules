@@ -1,0 +1,14 @@
+# Frontend Context Rules (apps/web)
+
+## Tech Stack
+- **Framework**: Next.js (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS (presumed) + Design System tokens.
+
+## Coding Standards
+- **Components**: Functional components with strict props.
+- **State**: Server Components by default. Client Components only for interactivity.
+- **API**: Fetch data from `../api` (or configured backend URL).
+
+## Monorepo
+- This is the `web` app within the Pipuli monorepo.

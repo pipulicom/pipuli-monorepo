@@ -1,7 +1,0 @@
-{
-    "project_id": "stan-baas-admin",
-    "database": {
-        "database_id": "stan-baas-admin-db",
-        "collection_prefix": "admin"
-    }
-}

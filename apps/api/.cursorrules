@@ -1,0 +1,24 @@
+# Backend Context Rules (apps/api)
+
+## Tech Stack
+- **Language**: Python 3.12+
+- **Framework**: FastAPI (Gateway/Router pattern)
+- **Database**: Google Cloud Firestore (via `services/database.py`)
+- **Infra**: Google Cloud Run, Secret Manager
+
+## Coding Standards
+- **Typing**: STRICT. Use `Pydantic` models for all data exchange. avoid `Dict[str, Any]` in new code.
+- **Imports**: Absolute imports from `apps.api` root or relative imports within modules.
+- **Structure**:
+  - `workflows/`: Business logic. ONE file per workflow.
+  - `services/`: Reusable infrastructure wrappers.
+  - `gateway/`: Router and request handling.
+- **Logging**: Use `utils.logger.Logger`. structured logging always.
+- **Messages**: Use `utils.messages.ErrorMessages` for user-facing strings.
+- **Constants**: Use `utils.constants` for system-wide values.
+- **Auth**: Use `@require_auth` from `utils.decorators`.
+- **Version**: Use `utils.version.py` script for versioning.
+
+## Monorepo
+- This is the `api` app within the Pipuli monorepo.
+- Run commands from `apps/api` root if possible, or adjust PYTHONPATH.
