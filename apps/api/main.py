@@ -40,7 +40,7 @@ app.include_router(router, prefix="/api", tags=["api"])
 @app.get("/")
 async def root():
     """Health check endpoint."""
-    return {"status": "ok", "service": "stan-baas"}
+    return {"message": "Pipuli Secure Deploy v1", "service": "stan-baas"}
 
 
 @app.get("/health")
