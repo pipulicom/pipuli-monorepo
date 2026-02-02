@@ -66,3 +66,55 @@ jobs:
           env_vars: |
             ENV=${{ env.ENV_NAME }}
           flags: '--allow-unauthenticated'
+
+  deploy-web:
+    name: Build & Deploy Web
+    needs: deploy # Optional: wait for API to deploy first? No, parallel is fine, but maybe safer.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # --- CONFIGURATION FOR DEV ---
+      - name: Set Environment Config (Dev)
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          echo "GCP_PROJECT=pipuli-dev" >> $GITHUB_ENV
+          echo "SERVICE_NAME=pipuli-web-dev" >> $GITHUB_ENV
+
+      # --- CONFIGURATION FOR PROD ---
+      - name: Set Environment Config (Prod)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "GCP_PROJECT=pipuli-prod" >> $GITHUB_ENV
+          echo "SERVICE_NAME=pipuli-web-prod" >> $GITHUB_ENV
+
+      # Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud (Dev)
+        if: github.ref == 'refs/heads/dev'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY_DEV }}'
+
+      - name: Authenticate to Google Cloud (Prod)
+        if: github.ref == 'refs/heads/main'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY_PROD }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # Deploy to Cloud Run (Web)
+      - name: Deploy Web to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          source: ./apps/web
+          project_id: ${{ env.GCP_PROJECT }}
+          region: ${{ env.REGION }}
+          flags: '--allow-unauthenticated'
