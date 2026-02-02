@@ -61,6 +61,9 @@ async def process_request(
     
     # Get headers as dict
     headers_dict = {key: value for key, value in request.headers.items()}
+
+    # Inject Method into body for workflows to use
+    body["_method"] = request.method
     
     # Save request
     logger.save_request(

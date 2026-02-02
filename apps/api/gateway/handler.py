@@ -50,7 +50,8 @@ async def handle_request(
         safe_flow_name = flow_name.replace("-", "_")
         
         workflow_paths = [
-            f"workflows.{safe_project_id}.{safe_flow_name}"
+            f"workflows.{safe_project_id}.{safe_flow_name}",
+            f"workflows.{safe_flow_name}"
         ]
         
         workflow_module = None
