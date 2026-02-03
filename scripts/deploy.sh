@@ -6,7 +6,7 @@ PROJECT_PROD="pipuli-prod"
 REGION="us-central1"
 
 print_usage() {
-  echo "Usage: ./scripts/deploy.sh [dev|prod]"
+  echo "Usage: ./scripts/deploy.sh [dev|prod|all]"
   exit 1
 }
 
@@ -24,6 +24,11 @@ elif [ "$ENV" == "prod" ]; then
   PROJECT_ID=$PROJECT_PROD
   API_SERVICE="pipuli-api-prod"
   WEB_SERVICE="pipuli-web-prod"
+elif [ "$ENV" == "all" ]; then
+  echo "🔥 Deploying to BOTH environments (Dev & Prod)..."
+  ./scripts/deploy.sh dev
+  ./scripts/deploy.sh prod
+  exit 0
 else
   print_usage
 fi
@@ -52,4 +57,4 @@ gcloud run deploy $WEB_SERVICE \
   --allow-unauthenticated \
   --set-env-vars NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID
 
-echo "✅ Deployment Complete! 🚀"
+echo "✅ [$ENV] Deployment Complete! 🚀"

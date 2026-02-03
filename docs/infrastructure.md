@@ -52,7 +52,19 @@ Desabilitamos o GitHub Actions por instabilidade. O fluxo oficial agora é manua
     ./scripts/deploy.sh prod
     ```
 
-### O que o script faz:
+    Para **AMBOS** (Dev + Prod):
+    ```bash
+    ./scripts/deploy.sh all
+    ```
+
+### 3. Commit & Push ("Commitar Ambos")
+Para salvar tudo e subir a versão automaticamente:
+```bash
+./scripts/commit.sh "mensagem do commit"
+```
+*Isso faz o Git Add, Git Commit e Git Push de uma vez só.*
+
+### O que o script de Deploy faz:
 1.  Sincroniza as versões (`VERSION` -> `apps/api` e `apps/web`).
 2.  Faz o build e upload do Backend para o Cloud Run.
 3.  Faz o build e upload do Frontend para o Cloud Run.
