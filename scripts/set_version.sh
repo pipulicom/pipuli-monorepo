@@ -5,9 +5,9 @@ VERSION=$(cat VERSION)
 
 echo "🔥 Synchronizing version to $VERSION..."
 
-# 1. Update Backend (Text file)
+# 1. Update Backend (Ghost File - not allowed in git)
 echo "$VERSION" > apps/api/VERSION
-echo "✅ Backend updated (apps/api/VERSION)"
+echo "✅ Backend updated (apps/api/VERSION - local only)"
 
 # 2. Update Frontend (JSON)
 # Using regex to replace version in package.json to avoid jq dependency requirement

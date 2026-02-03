@@ -28,11 +28,17 @@ Activate the following APIs for **BOTH** projects:
 - **Artifact Registry API**: Docker image storage.
 - **Cloud Build API**: Building containers.
 
-### 1.3 Configure Firestore
-1. Go to **Firestore**.
-2. Create Database in **Native Mode**.
-3. Select Region: `us-central1` (or your preferred region).
-4. Repeat for both envs.
+### Como atualizar a versão:
+1.  Edite o arquivo `VERSION` na raiz do projeto.
+2.  Rode o script de sincronização:
+    ```bash
+    ./scripts/set_version.sh
+    ```
+    *Isso cria um arquivo "fantasma" `apps/api/VERSION` (ignorado pelo Git) para rodar localmente.*
+
+3.  O script vai atualizar automaticamente o `apps/web/package.json`.
+4.  Faça o Git Commit.
+    *   No CI/CD, o arquivo `VERSION` raiz é injetado no container automaticamente.
 
 ### 1.4 Configure Secrets
 Store sensitive keys in **Secret Manager**:
