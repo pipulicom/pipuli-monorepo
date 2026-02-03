@@ -27,18 +27,36 @@ Activate the following APIs for **BOTH** projects:
 - **Secret Manager API**: Secure storage for keys.
 - **Artifact Registry API**: Docker image storage.
 - **Cloud Build API**: Building containers.
+---
 
-### Como atualizar a versão:
-1.  Edite o arquivo `VERSION` na raiz do projeto.
-2.  Rode o script de sincronização:
+## 8. Deploy (Manual & Oficial) 🚀
+
+Desabilitamos o GitHub Actions por instabilidade. O fluxo oficial agora é manual via scripts.
+
+### Como fazer Deploy:
+
+1.  **Garanta que você tem permissão:**
     ```bash
-    ./scripts/set_version.sh
+    gcloud auth login
     ```
-    *Isso cria um arquivo "fantasma" `apps/api/VERSION` (ignorado pelo Git) para rodar localmente.*
 
-3.  O script vai atualizar automaticamente o `apps/web/package.json`.
-4.  Faça o Git Commit.
-    *   No CI/CD, o arquivo `VERSION` raiz é injetado no container automaticamente.
+2.  **Rode o Script de Deploy:**
+    
+    Para Desenvolvimento:
+    ```bash
+    ./scripts/deploy.sh dev
+    ```
+
+    Para Produção:
+    ```bash
+    ./scripts/deploy.sh prod
+    ```
+
+### O que o script faz:
+1.  Sincroniza as versões (`VERSION` -> `apps/api` e `apps/web`).
+2.  Faz o build e upload do Backend para o Cloud Run.
+3.  Faz o build e upload do Frontend para o Cloud Run.
+4.  Configura as variáveis de ambiente corretas automaticamente.
 
 ### 1.4 Configure Secrets
 Store sensitive keys in **Secret Manager**:
