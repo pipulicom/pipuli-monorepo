@@ -30,8 +30,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000", 
         "http://127.0.0.1:3000", 
-        "https://pipuli-web-dev-553244616231.us-central1.run.app"
-    ],  # Explicitly allow local and dev frontend
+        "https://pipuli-web-dev-553244616231.us-central1.run.app",
+        "https://pipuli-web-prod-649464416750.us-central1.run.app"
+    ],  # Explicitly allow local, dev and prod frontends
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods
     allow_headers=["*"],  # Allow all headers
