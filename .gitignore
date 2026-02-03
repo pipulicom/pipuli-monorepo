@@ -42,6 +42,7 @@ ENV/
 *.json
 !requirements.txt
 !configs/*.json
+!**/package.json
 configs/credentials/
 
 # Secrets
