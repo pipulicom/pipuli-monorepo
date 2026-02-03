@@ -68,7 +68,7 @@ class Logger:
         self.log_entries = []
         
         # Initialize Cloud Logging client
-        self.client = cloud_logging.Client(project=os.getenv("GOOGLE_CLOUD_PROJECT", "pipuli-api"))
+        self.client = cloud_logging.Client(project=os.getenv("GOOGLE_CLOUD_PROJECT", "pipuli-dev"))
         self.service_name = os.getenv("SERVICE_NAME", "pipuli-api")
         self.logger = self.client.logger(self.service_name)
     
