@@ -34,24 +34,15 @@ The codebase is organized for clarity and modularity:
 3. **Check Health**:
    - URL: `http://localhost:8000/health`
 
-##  Version Management
+##  Version Management & Deployment
 
-The version is tracked in the `VERSION` file. Use the utility script to manage it:
-
-```bash
-# Show current version
-python utils/version.py show
-
-# Bump version
-python utils/version.py patch  # 1.0.0 -> 1.0.1
-python utils/version.py minor  # 1.0.0 -> 1.1.0
-python utils/version.py major  # 1.0.0 -> 2.0.0
-```
-
-## 🚀 Deployment
-
-The service is containerized using `Dockerfile` and deployed to **Google Cloud Run**.
+Please refer to the root `docs/infrastructure.md` or use the root scripts:
 
 ```bash
-gcloud run deploy stan-baas --source . --project stan-baas --region us-central1 --allow-unauthenticated
+# Update version and sync
+./scripts/set_version.sh
+
+# Deploy
+./scripts/deploy.sh [dev|prod|all]
 ```
+
