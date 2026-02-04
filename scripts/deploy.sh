@@ -56,7 +56,9 @@ echo "✅ API URL found: $API_URL"
 # Deploy Web
 # Deploy Web (Standard: Build Image -> Deploy Image)
 # Using Artifact Registry (cloud-run-source-deploy repo) to match existing infra
-IMAGE_TAG="$REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/$WEB_SERVICE"
+# 2026-02-04: Added timestamp to tag to prevent "Zombie Revisions" (caching issues)
+TIMESTAMP=$(date +%s)
+IMAGE_TAG="$REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/$WEB_SERVICE:$TIMESTAMP"
 
 echo "⚛️ Building Frontend Image (Web)..."
 gcloud builds submit apps/web \
