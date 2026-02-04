@@ -55,17 +55,19 @@ echo "✅ API URL found: $API_URL"
 
 # Deploy Web
 # Deploy Web (Standard: Build Image -> Deploy Image)
-# This is required to pass build-time arguments (NEXT_PUBLIC_...)
+# Using Artifact Registry (cloud-run-source-deploy repo) to match existing infra
+IMAGE_TAG="$REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/$WEB_SERVICE"
+
 echo "⚛️ Building Frontend Image (Web)..."
 gcloud builds submit apps/web \
-  --tag gcr.io/$PROJECT_ID/$WEB_SERVICE \
+  --tag $IMAGE_TAG \
   --project $PROJECT_ID \
   --build-arg NEXT_PUBLIC_API_URL=$API_URL \
   --build-arg NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID
 
 echo "⚛️ Deploying Frontend Container..."
 gcloud run deploy $WEB_SERVICE \
-  --image gcr.io/$PROJECT_ID/$WEB_SERVICE \
+  --image $IMAGE_TAG \
   --project $PROJECT_ID \
   --region $REGION \
   --allow-unauthenticated
