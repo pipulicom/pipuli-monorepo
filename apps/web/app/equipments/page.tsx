@@ -133,6 +133,10 @@ export default function EquipmentsPage() {
                     )}
                 </div>
             </div>
+            {/* DEBUG PROBE */}
+            <div className="fixed bottom-0 left-0 right-0 bg-black text-xs text-green-400 p-1 text-center font-mono opacity-80">
+                DEBUG PROBE: API_URL=[{process.env.NEXT_PUBLIC_API_URL}] PROJ_ID=[{process.env.NEXT_PUBLIC_PROJECT_ID}]
+            </div>
         </div>
     );
 }
