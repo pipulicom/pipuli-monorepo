@@ -48,6 +48,11 @@ gcloud run deploy $API_SERVICE \
   --allow-unauthenticated \
   --set-env-vars GOOGLE_CLOUD_PROJECT=$PROJECT_ID,SERVICE_NAME=$API_SERVICE,ENV=$ENV
 
+# Get API URL
+echo "🔍 Retrieving API URL..."
+API_URL=$(gcloud run services describe $API_SERVICE --project $PROJECT_ID --region $REGION --format 'value(status.url)')
+echo "✅ API URL found: $API_URL"
+
 # Deploy Web
 echo "⚛️ Deploying Frontend (Web)..."
 gcloud run deploy $WEB_SERVICE \
@@ -55,6 +60,6 @@ gcloud run deploy $WEB_SERVICE \
   --project $PROJECT_ID \
   --region $REGION \
   --allow-unauthenticated \
-  --set-env-vars NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID,NEXT_PUBLIC_API_URL=https://$API_SERVICE-$PROJECT_ID.us-central1.run.app
+  --set-env-vars NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID,NEXT_PUBLIC_API_URL=$API_URL
 
 echo "✅ [$ENV] Deployment Complete! 🚀"
