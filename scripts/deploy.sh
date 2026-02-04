@@ -55,6 +55,6 @@ gcloud run deploy $WEB_SERVICE \
   --project $PROJECT_ID \
   --region $REGION \
   --allow-unauthenticated \
-  --set-env-vars NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID
+  --set-env-vars NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID,NEXT_PUBLIC_API_URL=https://$API_SERVICE-$PROJECT_ID.us-central1.run.app
 
 echo "✅ [$ENV] Deployment Complete! 🚀"
