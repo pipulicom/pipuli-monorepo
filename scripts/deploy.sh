@@ -54,12 +54,20 @@ API_URL=$(gcloud run services describe $API_SERVICE --project $PROJECT_ID --regi
 echo "✅ API URL found: $API_URL"
 
 # Deploy Web
-echo "⚛️ Deploying Frontend (Web)..."
+# Deploy Web (Standard: Build Image -> Deploy Image)
+# This is required to pass build-time arguments (NEXT_PUBLIC_...)
+echo "⚛️ Building Frontend Image (Web)..."
+gcloud builds submit apps/web \
+  --tag gcr.io/$PROJECT_ID/$WEB_SERVICE \
+  --project $PROJECT_ID \
+  --build-arg NEXT_PUBLIC_API_URL=$API_URL \
+  --build-arg NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID
+
+echo "⚛️ Deploying Frontend Container..."
 gcloud run deploy $WEB_SERVICE \
-  --source apps/web \
+  --image gcr.io/$PROJECT_ID/$WEB_SERVICE \
   --project $PROJECT_ID \
   --region $REGION \
-  --allow-unauthenticated \
-  --set-env-vars NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID,NEXT_PUBLIC_API_URL=$API_URL
+  --allow-unauthenticated
 
 echo "✅ [$ENV] Deployment Complete! 🚀"
