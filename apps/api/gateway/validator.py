@@ -25,9 +25,9 @@ def validate_api_key(api_key: str) -> None:
     if project_id not in ["pipuli-dev", "pipuli-prod"]:
         raise ValueError(f"Project '{project_id}' is not allowed for API key validation.")
     
-    # Allow hardcoded key for dev
-    if project_id == "pipuli-dev" and api_key == "dev-key":
-        return
+    
+    # STRICT MODE: All environments must use Secret Manager
+    # Previous "dev-key" exception removed to ensure Dev/Prod parity.
 
     secret_id = "api-key"
     

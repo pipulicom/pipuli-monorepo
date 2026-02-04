@@ -1,6 +1,8 @@
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://pipuli-api-dev-553244616231.us-central1.run.app";
 const PROJ_ID = process.env.NEXT_PUBLIC_PROJECT_ID || "pipuli-dev";
+// API Key injected at build time (pulled from Secret Manager)
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || "";
 
 export interface Equipment {
     id?: string;
@@ -18,7 +20,7 @@ export const EquipmentService = {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-API-Key": "dev-key"
+                    "X-API-Key": API_KEY
                 }
             });
 
@@ -42,7 +44,7 @@ export const EquipmentService = {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-API-Key": "dev-key"
+                    "X-API-Key": API_KEY
                 },
                 body: JSON.stringify(data)
             });

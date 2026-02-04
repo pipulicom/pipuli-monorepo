@@ -53,6 +53,10 @@ echo "🔍 Retrieving API URL..."
 API_URL=$(gcloud run services describe $API_SERVICE --project $PROJECT_ID --region $REGION --format 'value(status.url)')
 echo "✅ API URL found: $API_URL"
 
+# Get API Key (Security Unification)
+echo "🔑 Retrieving API Key from Secret Manager..."
+API_KEY=$(gcloud secrets versions access latest --secret="api-key" --project "$PROJECT_ID")
+
 # Deploy Web
 # Deploy Web (Standard: Build Image -> Deploy Image)
 # Using Artifact Registry (cloud-run-source-deploy repo) to match existing infra
@@ -68,6 +72,7 @@ echo "📝 Generating local .env.production..."
 cat > apps/web/.env.production <<EOF
 NEXT_PUBLIC_API_URL=$API_URL
 NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID
+NEXT_PUBLIC_API_KEY=$API_KEY
 EOF
 
 # Submit build (sources include the new .env.production)
