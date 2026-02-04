@@ -8,6 +8,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from gateway.router import router
 from pathlib import Path
 
+from configs.loader import load_config
+
 # Load environment variables
 load_dotenv()
 
@@ -18,6 +20,11 @@ try:
 except FileNotFoundError:
     VERSION = "0.0.0"
 
+# Load Configuration
+project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "pipuli-dev")
+config = load_config(project_id)
+cors_origins = config.get("security", {}).get("cors_origins", [])
+
 app = FastAPI(
     title="Pipuli API",
     description="Generic backend for processing API calls from multiple frontend projects",
@@ -27,12 +34,7 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000", 
-        "http://127.0.0.1:3000", 
-        "https://pipuli-web-dev-553244616231.us-central1.run.app",
-        "https://pipuli-web-prod-649464416750.us-central1.run.app"
-    ],  # Explicitly allow local, dev and prod frontends
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],  # Allow all methods
     allow_headers=["*"],  # Allow all headers
