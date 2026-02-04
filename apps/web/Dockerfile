@@ -18,17 +18,13 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Arguments for build time
+# Arguments for build time (Optional/Deprcated in favor of .env file injection)
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_PROJECT_ID
 
-# Debug: Verify args are present
-RUN echo "🏗️ Building with API_URL=$NEXT_PUBLIC_API_URL"
-RUN if [ -z "$NEXT_PUBLIC_API_URL" ]; then echo "❌ ERROR: NEXT_PUBLIC_API_URL is missing!"; exit 1; fi
-
-# Force vars into .env (Robustness fix)
-RUN echo "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" >> .env
-RUN echo "NEXT_PUBLIC_PROJECT_ID=$NEXT_PUBLIC_PROJECT_ID" >> .env
+# NOTE: We now inject .env.production via the build context, so we don't need
+# to force these ARGs or fail if they are missing.
+# The .env.production file takes precedence.
 
 RUN npm run build
 

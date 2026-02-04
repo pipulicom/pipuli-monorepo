@@ -61,11 +61,22 @@ TIMESTAMP=$(date +%s)
 IMAGE_TAG="$REGION-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/$WEB_SERVICE:$TIMESTAMP"
 
 echo "⚛️ Building Frontend Image (Web)..."
+
+# Strategy Change: Generate .env.production locally and upload it
+# This bypasses 'gcloud builds submit' limitations with --build-arg
+echo "📝 Generating local .env.production..."
+cat > apps/web/.env.production <<EOF
+NEXT_PUBLIC_API_URL=$API_URL
+NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID
+EOF
+
+# Submit build (sources include the new .env.production)
 gcloud builds submit apps/web \
   --tag $IMAGE_TAG \
-  --project $PROJECT_ID \
-  --build-arg NEXT_PUBLIC_API_URL=$API_URL \
-  --build-arg NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID
+  --project $PROJECT_ID
+
+# Cleanup
+rm apps/web/.env.production
 
 echo "⚛️ Deploying Frontend Container..."
 gcloud run deploy $WEB_SERVICE \
