@@ -3,13 +3,45 @@ Gateway router for handling API requests.
 """
 from fastapi import APIRouter, Header, HTTPException, Request
 from typing import Optional, Dict, Any
-from gateway.validator import validate_api_key
+from google.cloud import secretmanager
 from gateway.handler import handle_request
 from utils.logger import Logger
 from services.auth import AuthService
 from response.formatter import error_response as format_error_response
+import os
 
 router = APIRouter()
+
+
+def validate_api_key(api_key: str) -> None:
+    """
+    Validate API key against Secret Manager.
+    """
+    project_id = os.getenv("GOOGLE_CLOUD_PROJECT", "pipuli-dev")
+    
+    # STRICT MODE: All environments must use Secret Manager
+    if project_id not in ["pipuli-dev", "pipuli-prod"]:
+        raise ValueError(f"Project '{project_id}' is not allowed for API key validation.")
+
+    secret_id = "api-key"
+    
+    try:
+        client = secretmanager.SecretManagerServiceClient()
+        secret_name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
+        
+        # Access secret version
+        response = client.access_secret_version(request={"name": secret_name})
+        stored_api_key = response.payload.data.decode("UTF-8").strip()
+        
+        # Compare API keys
+        if api_key != stored_api_key:
+            raise ValueError("Invalid API key")
+            
+    except Exception as e:
+        error_msg = str(e)
+        if "not found" in error_msg.lower():
+             pass # Fallback handled by raising error below
+        raise ValueError("API key validation failed")
 
 
 @router.api_route("/{project_id}/{flow_name}", methods=["GET", "POST"])

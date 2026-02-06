@@ -4,15 +4,16 @@ Database service for Firestore operations.
 import uuid
 from typing import Dict, Any, Optional, List
 from google.cloud import firestore
-from services.base import BaseService
 from utils.logger import Logger
 import os
 
 
-class DatabaseService(BaseService):
+class DatabaseService:
+
     """
     Service for Firestore database operations.
     """
+    
     
     def __init__(self, config: Dict[str, Any], logger: Optional[Logger] = None):
         """
@@ -22,7 +23,10 @@ class DatabaseService(BaseService):
             config: Database configuration (must include database.database_id)
             logger: Logger instance
         """
-        super().__init__(config, logger)
+        self.config = config
+        self.logger = logger
+        self.service_logger = logger.for_module("database") if logger else None
+
         # Always use Google Cloud project for Firestore client
         # Priority: Config 'gcp_project_id' > Env 'GOOGLE_CLOUD_PROJECT' > Default
         self.gcp_project_id = config.get("gcp_project_id", os.getenv("GOOGLE_CLOUD_PROJECT", "pipuli-dev"))
@@ -351,3 +355,19 @@ class DatabaseService(BaseService):
             self._log("error", f"Error querying documents", error=e, data={"collection": collection})
             raise
 
+
+    def _log(self, level: str, message: str, data: Optional[Dict[str, Any]] = None, error: Optional[Exception] = None):
+        """
+        Log message if logger is available.
+        """
+        if not self.service_logger:
+            return
+        
+        if level == "info":
+            self.service_logger.info(message, data)
+        elif level == "error":
+            self.service_logger.error(message, error=error, data=data)
+        elif level == "warning":
+            self.service_logger.warning(message, data)
+        elif level == "debug":
+            self.service_logger.debug(message, data)

@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Equipment, EquipmentService } from "../../services/api";
+import { Equipment, EquipmentService } from "@/src/services/equipment";
 
 export default function EquipmentsPage() {
     const [equipments, setEquipments] = useState<Equipment[]>([]);
