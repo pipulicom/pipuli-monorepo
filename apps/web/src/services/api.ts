@@ -39,10 +39,54 @@ async function fetcher<T>(endpoint: string, options: RequestOptions = {}): Promi
     }
     const url = endpoint.startsWith('http') ? endpoint : `${baseUrl}${endpoint}`;
 
+    const startTime = Date.now();
+
+    // Lazy load the store to avoid circular deps or client-side issues
+    const { useDebugStore } = await import('../store/debugStore');
+    const addLog = useDebugStore.getState().addLog;
+    const isDebug = process.env.NEXT_PUBLIC_DEBUG_MODE === 'true';
+
+    if (isDebug) {
+        addLog({
+            type: 'request',
+            method: options.method || 'GET',
+            url: url,
+            data: options.body ? JSON.parse(options.body as string) : undefined
+        });
+    }
+
     const response = await fetch(url, options);
+    const duration = Date.now() - startTime;
+
+    if (isDebug) {
+        // Clone response to read body without consuming the stream for the app
+        const clone = response.clone();
+        const responseData = await clone.json().catch(() => null);
+
+        addLog({
+            type: 'response',
+            method: options.method || 'GET',
+            url: url,
+            status: response.status,
+            duration,
+            data: responseData
+        });
+    }
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
+
+        if (isDebug) {
+            addLog({
+                type: 'error',
+                method: options.method || 'GET',
+                url: url,
+                status: response.status,
+                message: errorData.message || response.statusText,
+                data: errorData
+            });
+        }
+
         // Throw the full error object so the UI can handle i18n codes
         // The errorData might look like { error: "unauthorized", code: "AUTH_TOKEN", params: {} }
         const error = new Error(errorData.message || `API Error: ${response.statusText}`);

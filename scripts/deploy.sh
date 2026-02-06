@@ -30,10 +30,12 @@ if [ "$ENV" == "dev" ]; then
   PROJECT_ID=$PROJECT_DEV
   API_SERVICE="pipuli-api-dev"
   WEB_SERVICE="pipuli-web-dev"
+  DEBUG_MODE="true"
 elif [ "$ENV" == "prod" ]; then
   PROJECT_ID=$PROJECT_PROD
   API_SERVICE="pipuli-api-prod"
   WEB_SERVICE="pipuli-web-prod"
+  DEBUG_MODE="false"
 elif [ "$ENV" == "all" ]; then
   echo "🔥 Deploying to BOTH environments (Dev & Prod)..."
   ./scripts/deploy.sh dev $COMPONENT
@@ -90,6 +92,7 @@ if [[ "$COMPONENT" == "all" || "$COMPONENT" == "web" ]]; then
 NEXT_PUBLIC_API_URL=$API_URL
 NEXT_PUBLIC_PROJECT_ID=$PROJECT_ID
 NEXT_PUBLIC_API_KEY=$API_KEY
+NEXT_PUBLIC_DEBUG_MODE=$DEBUG_MODE
 EOF
 
   # Submit build (sources include the new .env.production)
