@@ -3,8 +3,10 @@
 
 import { useEffect, useState } from "react";
 import { Equipment, EquipmentService } from "@/src/services/equipment";
+import { useTranslations } from "next-intl";
 
 export default function EquipmentsPage() {
+    const t = useTranslations('Management');
     const [equipments, setEquipments] = useState<Equipment[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -50,11 +52,11 @@ export default function EquipmentsPage() {
     return (
         <div className="min-h-screen bg-gray-900 text-white p-8 font-sans">
             <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl font-bold mb-8 text-blue-400">Pipuli Equipments Prototype</h1>
+                <h1 className="text-3xl font-bold mb-8 text-blue-400">{t('title')}</h1>
 
                 {/* FORM */}
                 <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-8 border border-gray-700">
-                    <h2 className="text-xl font-semibold mb-4">Add New Equipment</h2>
+                    <h2 className="text-xl font-semibold mb-4">{t('addNew')}</h2>
                     <form onSubmit={handleSubmit} className="flex gap-4 items-end flex-wrap">
                         <div>
                             <label className="block text-sm text-gray-400 mb-1">Name</label>
@@ -63,7 +65,7 @@ export default function EquipmentsPage() {
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 className="bg-gray-700 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
-                                placeholder="e.g. Drill"
+                                placeholder={t('namePlaceholder')}
                             />
                         </div>
                         <div>
@@ -73,7 +75,7 @@ export default function EquipmentsPage() {
                                 value={formData.brand}
                                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                                 className="bg-gray-700 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
-                                placeholder="e.g. DeWalt"
+                                placeholder={t('brandPlaceholder')}
                             />
                         </div>
                         <div>
@@ -83,21 +85,21 @@ export default function EquipmentsPage() {
                                 value={formData.type}
                                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                                 className="bg-gray-700 border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
-                                placeholder="e.g. Power Tool"
+                                placeholder={t('typePlaceholder')}
                             />
                         </div>
                         <button
                             type="submit"
                             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition-colors"
                         >
-                            Add
+                            {t('add')}
                         </button>
                     </form>
                 </div>
 
                 {/* LIST */}
                 <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
-                    <h2 className="text-xl font-semibold p-6 border-b border-gray-700">Equipment List</h2>
+                    <h2 className="text-xl font-semibold p-6 border-b border-gray-700">{t('listTitle')}</h2>
 
                     {loading ? (
                         <div className="p-6 text-center text-gray-400">Loading...</div>
@@ -109,10 +111,10 @@ export default function EquipmentsPage() {
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="bg-gray-750 text-gray-400 border-b border-gray-700">
-                                    <th className="p-4">Name</th>
-                                    <th className="p-4">Brand</th>
-                                    <th className="p-4">Type</th>
-                                    <th className="p-4">ID</th>
+                                    <th className="p-4">{t('colName')}</th>
+                                    <th className="p-4">{t('colBrand')}</th>
+                                    <th className="p-4">{t('colType')}</th>
+                                    <th className="p-4">{t('colId')}</th>
                                 </tr>
                             </thead>
                             <tbody>

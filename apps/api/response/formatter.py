@@ -31,9 +31,14 @@ def success_response(
     return response
 
 
+    return response
+
+
 def error_response(
     error: str,
     message: Optional[str] = None,
+    code: Optional[str] = None,
+    params: Optional[Dict[str, Any]] = None,
     details: Optional[Dict[str, Any]] = None,
     data: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
@@ -41,10 +46,12 @@ def error_response(
     Format error response.
     
     Args:
-        error: Error type or code
-        message: Error message
-        details: Optional error details
-        data: Optional data payload (alias for details or additional data)
+        error: Error type/category (e.g. "validation_error", "unauthorized")
+        message: Legacy human-readable message (fallback)
+        code: I18n error code (e.g. "AUTH_INVALID_TOKEN")
+        params: Parameters for i18n message interpolation
+        details: Optional technical details
+        data: Optional data payload
     
     Returns:
         Formatted error response
@@ -54,6 +61,14 @@ def error_response(
         "error": error
     }
     
+    # Priority: Code > Message
+    if code:
+        response["code"] = code
+        
+    if params:
+        response["params"] = params
+        
+    # Keep message for backward compatibility or debugging
     if message:
         response["message"] = message
     

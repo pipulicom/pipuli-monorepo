@@ -106,16 +106,26 @@ async def process_request(
         client_ip=request.client.host if request.client else None
     )
     
+from utils.exceptions import AppException
+
+# ... (inside process_request)
+
     # Validate API key
     if not x_api_key:
         gateway_logger.warning("API key missing")
         error_response = format_error_response(
             error="unauthorized",
+            code="AUTH_API_KEY_REQUIRED",
             message="API key is required. Provide X-API-Key header."
         )
         logger.save_response(401, error_response)
         logger.save()
-        raise HTTPException(status_code=401, detail=error_response.get("message"))
+        raise AppException(
+            error_type="unauthorized",
+            code="AUTH_API_KEY_REQUIRED",
+            status_code=401,
+            message="API key is required."
+        )
     
     try:
         # Validate API key via Secret Manager
@@ -126,11 +136,17 @@ async def process_request(
         gateway_logger.error("API key validation failed", error=e)
         error_response = format_error_response(
             error="unauthorized",
+            code="AUTH_INVALID_API_KEY",
             message=str(e)
         )
         logger.save_response(401, error_response)
         logger.save()
-        raise HTTPException(status_code=401, detail=error_response.get("message"))
+        raise AppException(
+            error_type="unauthorized",
+            code="AUTH_INVALID_API_KEY",
+            status_code=401,
+            message=str(e)
+        )
     
     # Handle request (route to workflow)
     try:
@@ -145,18 +161,19 @@ async def process_request(
             
             if not authorization or not authorization.startswith("Bearer "):
                 gateway_logger.warning("Missing or invalid Authorization header")
-                # We might want to allow public endpoints? For now, enforce if configured.
-                # Or maybe just pass None if not provided? 
-                # User asked for secure flow, so let's enforce if header is present OR if we decide to.
-                # For now, let's try to validate if present, or error if missing?
-                # Let's enforce it.
                 error_response = format_error_response(
                     error="unauthorized",
+                    code="AUTH_TOKEN_REQUIRED",
                     message="Authorization header required (Bearer token)"
                 )
                 logger.save_response(401, error_response)
                 logger.save()
-                raise HTTPException(status_code=401, detail=error_response.get("message"))
+                raise AppException(
+                    error_type="unauthorized",
+                    code="AUTH_TOKEN_REQUIRED",
+                    status_code=401,
+                    message="Authorization header required."
+                )
             
             token = authorization.split(" ")[1]
             auth_service = AuthService(config, logger)
@@ -176,11 +193,17 @@ async def process_request(
                 gateway_logger.error("Token validation failed", error=e)
                 error_response = format_error_response(
                     error="unauthorized",
+                    code="AUTH_INVALID_TOKEN",
                     message=str(e)
                 )
                 logger.save_response(401, error_response)
                 logger.save()
-                raise HTTPException(status_code=401, detail=error_response.get("message"))
+                raise AppException(
+                    error_type="unauthorized",
+                    code="AUTH_INVALID_TOKEN",
+                    status_code=401,
+                    message=str(e)
+                )
 
         gateway_logger.info("Routing to handler")
         # We pass the modified body with injected auth data
@@ -191,6 +214,7 @@ async def process_request(
             gateway_logger.warning("Response not standardized, standardizing")
             response = format_error_response(
                 error="internal_error",
+                code="INTERNAL_RESPONSE_FORMAT_ERROR",
                 message="Response format error"
             )
         
@@ -198,18 +222,23 @@ async def process_request(
         logger.save_response(200, response)
         logger.save()
         return response
-    except HTTPException:
+
+    except AppException:
+        # Re-raise AppException to be handled by the global handler
         raise
     except Exception as e:
         gateway_logger.error("Error processing request", error=e)
         error_response = format_error_response(
             error="internal_error",
+            code="INTERNAL_SERVER_ERROR",
             message=f"Error processing request: {str(e)}"
         )
         logger.save_response(500, error_response)
         logger.save()
-        raise HTTPException(
+        raise AppException(
+            error_type="internal_error",
+            code="INTERNAL_SERVER_ERROR",
             status_code=500,
-            detail=error_response.get("message")
+            message=str(e)
         )
 

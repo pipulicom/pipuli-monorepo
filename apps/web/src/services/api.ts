@@ -43,7 +43,12 @@ async function fetcher<T>(endpoint: string, options: RequestOptions = {}): Promi
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `API Error: ${response.statusText}`);
+        // Throw the full error object so the UI can handle i18n codes
+        // The errorData might look like { error: "unauthorized", code: "AUTH_TOKEN", params: {} }
+        const error = new Error(errorData.message || `API Error: ${response.statusText}`);
+        (error as any).info = errorData;
+        (error as any).code = errorData.code;
+        throw error;
     }
 
     return response.json();
